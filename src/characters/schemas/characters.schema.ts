@@ -5,10 +5,10 @@ export type CharactersDocument = Characters & Document;
 
 export class Ki {
   @Prop()
-  baseKi: string;
+  base: string;
 
   @Prop()
-  maxKi: string;
+  max: string;
 }
 
 @Schema()

@@ -24,8 +24,8 @@ export class CharactersService {
       name: character.name,
       planet: character.planet,
       ki: {
-        baseKi: character.ki.baseKi,
-        maxKi: character.ki.maxKi,
+        base: character.ki.base,
+        max: character.ki.max,
       },
       image: character.image,
       race: character.race,

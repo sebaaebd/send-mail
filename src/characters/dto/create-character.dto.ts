@@ -14,11 +14,11 @@ así no se crea con un id diferente*/
 class KiDto {
   @IsString()
   @IsNotEmpty()
-  baseKi: string;
+  base: string;
 
   @IsString()
   @IsNotEmpty()
-  maxKi: string;
+  max: string;
 }
 
 export class CreateCharacterDto {

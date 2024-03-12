@@ -4,8 +4,8 @@ interface CharactersResponse {
   name: string;
   planet: string;
   ki: {
-    baseKi: string;
-    maxKi: string;
+    base: string;
+    max: string;
   };
   image: string;
   race: string;
