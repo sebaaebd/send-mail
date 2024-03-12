@@ -6,6 +6,8 @@ import {
   Patch,
   Param,
   Delete,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 import { CharactersService } from './characters.service';
 import { CreateCharacterDto } from './dto/create-character.dto';
@@ -18,6 +20,7 @@ export class CharactersController {
   constructor(private readonly charactersService: CharactersService) {}
 
   @Post()
+  @UsePipes(new ValidationPipe())
   create(@Body() createCharacterDto: CreateCharacterDto) {
     return this.charactersService.create(createCharacterDto);
   }
@@ -27,21 +30,21 @@ export class CharactersController {
     return this.charactersService.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.charactersService.findOne(+id);
+  @Get(':name')
+  findOne(@Param('name') name: string) {
+    return this.charactersService.findOne(name);
   }
 
-  @Patch(':id')
+  @Patch(':name')
   update(
-    @Param('id') id: string,
+    @Param('name') name: string,
     @Body() updateCharacterDto: UpdateCharacterDto,
   ) {
-    return this.charactersService.update(+id, updateCharacterDto);
+    return this.charactersService.update(name, updateCharacterDto);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.charactersService.remove(+id);
+  @Delete(':name')
+  remove(@Param('name') name: string) {
+    return this.charactersService.remove(name);
   }
 }
