@@ -45,9 +45,10 @@ export class CharactersService {
     }));
   }
 
+  //metodo para encontrar un personaje
   async findOne(name: string) {
     const existingCharacter = await this.charactersModel
-      .findOne({ name })
+      .findOne({ name: { $regex: new RegExp(name, 'i') } })
       .exec();
     if (!existingCharacter) {
       return { message: `Character '${name}' doesn't exists` };
