@@ -13,8 +13,18 @@ export class CharactersService {
     private readonly charactersModel: Model<CharactersDocument>,
   ) {}
 
-  create(createCharacterDto: CreateCharacterDto) {
-    return 'This action adds a new item';
+  async create(createCharacterDto: CreateCharacterDto) {
+    const { name } = createCharacterDto;
+    const existingCharacter = await this.charactersModel
+      .findOne({ name })
+      .exec();
+    if (existingCharacter) {
+      return { message: `Character '${name}' already exists` };
+    }
+
+    const characterCreate =
+      await this.charactersModel.create(createCharacterDto);
+    return characterCreate.save();
   }
 
   async findAll(): Promise<CharactersResponse[]> {
@@ -35,15 +45,21 @@ export class CharactersService {
     }));
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} character`;
+  async findOne(name: string) {
+    const existingCharacter = await this.charactersModel
+      .findOne({ name })
+      .exec();
+    if (!existingCharacter) {
+      return { message: `Character '${name}' doesn't exists` };
+    }
+    return existingCharacter;
   }
 
-  update(id: number, updateCharacterDto: UpdateCharacterDto) {
-    return `This action updates a #${id} character`;
+  update(name: string, updateCharacterDto: UpdateCharacterDto) {
+    return `This action updates a #${name} character`;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} character`;
+  remove(name: string) {
+    return `This action removes a #${name} character`;
   }
 }
