@@ -22,16 +22,12 @@ export class CharactersService {
     // Se mapean los resultados a la estructura de la interfaz creada
     return characters.map((character) => ({
       name: character.name,
-      planet: character.planet,
       ki: {
         base: character.ki.base,
         max: character.ki.max,
       },
       image: character.image,
-      race: character.race,
       afiliation: character.afiliation,
-      description: character.description,
-      techniques: character.techniques,
     }));
   }
 

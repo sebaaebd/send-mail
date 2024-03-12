@@ -2,14 +2,10 @@
 character service*/
 interface CharactersResponse {
   name: string;
-  planet: string;
   ki: {
     base: string;
     max: string;
   };
   image: string;
-  race: string;
   afiliation: string;
-  description: string;
-  techniques: string[];
 }
