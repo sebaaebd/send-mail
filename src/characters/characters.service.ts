@@ -10,15 +10,29 @@ import { Model } from 'mongoose';
 export class CharactersService {
   constructor(
     @InjectModel(Characters.name)
-    private charactersModule: Model<CharactersDocument>,
+    private readonly charactersModel: Model<CharactersDocument>,
   ) {}
 
   create(createCharacterDto: CreateCharacterDto) {
     return 'This action adds a new item';
   }
 
-  async findAll(): Promise<CharactersDocument[]> {
-    return this.charactersModule.find().exec();
+  async findAll(): Promise<CharactersResponse[]> {
+    const characters = await this.charactersModel.find().exec();
+    // Se mapean los resultados a la estructura de la interfaz creada
+    return characters.map((character) => ({
+      name: character.name,
+      planet: character.planet,
+      ki: {
+        baseKi: character.ki.baseKi,
+        maxKi: character.ki.maxKi,
+      },
+      image: character.image,
+      race: character.race,
+      afiliation: character.afiliation,
+      description: character.description,
+      techniques: character.techniques,
+    }));
   }
 
   findOne(id: number) {

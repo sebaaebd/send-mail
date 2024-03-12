@@ -3,6 +3,14 @@ import { Document } from 'mongoose';
 
 export type CharactersDocument = Characters & Document;
 
+export class Ki {
+  @Prop()
+  baseKi: string;
+
+  @Prop()
+  maxKi: string;
+}
+
 @Schema()
 export class Characters {
   @Prop({ required: true, unique: true })
@@ -11,17 +19,8 @@ export class Characters {
   @Prop({ required: true })
   planet: string;
 
-  @Prop({
-    type: {
-      baseKi: { type: String, required: true },
-      maxKi: { type: String, required: true },
-    },
-    required: true,
-  })
-  ki: {
-    baseKi: string;
-    maxKi: string;
-  };
+  @Prop({ type: Ki })
+  ki: Ki;
 
   @Prop({ required: true })
   image: string;
