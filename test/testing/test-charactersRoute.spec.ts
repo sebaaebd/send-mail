@@ -1,3 +1,5 @@
+/*PRUEBA UNITARIA RUTA /CHARACTERS */
+
 import { Test, TestingModule } from '@nestjs/testing';
 import { CharactersController } from 'src/characters/characters.controller';
 import { CharactersService } from 'src/characters/characters.service';
@@ -24,16 +26,11 @@ describe('CharactersController', () => {
     controller = module.get<CharactersController>(CharactersController);
   });
 
-  it('should be defined', () => {
-    expect(controller).toBeDefined();
-  });
-
-  //creamos el metodo findAll que esta en nuestro controlador
+  //llamamos el metodo findAll que esta en nuestro controlador
   it('findAll => should return all characters', async () => {
     //creamos el array donde agregaremos los datos del pj estaticamente
     const character = [
       {
-        _id: '65ef0b8db0b567f4c0497ebd',
         name: 'Goku',
         planet: 'Tierra',
         ki: {
@@ -55,13 +52,11 @@ describe('CharactersController', () => {
         ],
       },
       {
-        _id: '65ef10225e18620cafd8fe0b',
         name: 'Vegeta',
         planet: 'Planeta Vegeta',
         ki: {
           baseKi: '54 Millones ',
           maxKi: '19.84 Septillón',
-          _id: '65ef10225e18620cafd8fe0c',
         },
         image:
           'https://res.cloudinary.com/dgtgbyo76/image/upload/v1699044422/i9hpfjplth6gjudvhsx3.webp',
@@ -90,7 +85,7 @@ describe('CharactersController', () => {
     // Verificamos si el resultado devuelto es igual al array character
     expect(result).toEqual(character);
 
-    // Verificamos que el método findAll del servicio haya sido llamado
+    // Verificamos que la función mock del servicio characters haya sido llamada
     expect(mockCharacterService.findAll).toHaveBeenCalled();
   });
 });
