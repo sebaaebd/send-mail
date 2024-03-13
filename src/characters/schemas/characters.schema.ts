@@ -19,6 +19,9 @@ export class Characters {
   @Prop({ required: true })
   planet: string;
 
+  @Prop({ required: true })
+  universe: string;
+
   @Prop({ type: Ki })
   ki: Ki;
 
@@ -36,5 +39,8 @@ export class Characters {
 
   @Prop({ type: [String], required: true })
   techniques: string[];
+
+  @Prop({ type: [String], required: true })
+  stage: string[];
 }
 export const CharactersSchema = SchemaFactory.createForClass(Characters);

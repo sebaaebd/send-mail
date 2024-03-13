@@ -8,6 +8,7 @@ import {
   Delete,
   UsePipes,
   ValidationPipe,
+  Query,
 } from '@nestjs/common';
 import { CharactersService } from './characters.service';
 import { CreateCharacterDto } from './dto/create-character.dto';
@@ -33,6 +34,14 @@ export class CharactersController {
   @Get(':name')
   findOne(@Param('name') name: string) {
     return this.charactersService.findOne(name);
+  }
+
+  @Get('planet/:name')
+  findRandom(
+    @Param('name') planet: string,
+    @Query('character') character: string,
+  ) {
+    return this.charactersService.findRandomPlanet(planet, character);
   }
 
   @Patch(':name')
