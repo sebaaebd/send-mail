@@ -9,3 +9,15 @@ interface CharactersResponse {
   image: string;
   afiliation: string;
 }
+
+//interface para un solo personaje del metodo findOne
+interface CharacterResponse {
+  name: string;
+  image: string;
+  race: string;
+  planet: string;
+  universe: string;
+  description: string;
+  techniques: string[];
+  stage: string[];
+}

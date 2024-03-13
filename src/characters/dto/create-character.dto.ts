@@ -30,6 +30,10 @@ export class CreateCharacterDto {
   @IsNotEmpty()
   planet: string;
 
+  @IsString()
+  @IsNotEmpty()
+  universe: string;
+
   @ValidateNested()
   @Type(() => KiDto)
   ki: KiDto;
