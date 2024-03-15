@@ -4,17 +4,17 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { CreateCharacterDto } from './dto/create-character.dto';
-import { UpdateCharacterDto } from './dto/update-character.dto';
-import { Characters, CharactersDocument } from './schemas/characters.schema';
-import { TechniquesService } from './techniques.service';
-import { PlanetsService } from '../planet/services/planets.service';
-import { UniverseService } from './universe.service';
+import { CreateCharacterDto } from '../dto/create-character.dto';
+import { UpdateCharacterDto } from '../dto/update-character.dto';
+import { Characters, CharactersDocument } from '../schemas/characters.schema';
+import { TechniquesService } from '../../techniques/services/techniques.service';
+import { PlanetsService } from '../../planet/services/planets.service';
+import { UniverseService } from '../universe.service';
 import { Model } from 'mongoose';
 import {
   CharacterResponse,
   CharactersResponse,
-} from './interface/characters.interface';
+} from '../interface/characters.interface';
 
 // aqui se definen los servicios como get, post, put, patch que luego se instancian en el controlador
 @Injectable()
@@ -183,7 +183,7 @@ export class CharactersService {
   }
 
   update(name: string, updateCharacterDto: UpdateCharacterDto) {
-    return `This action updates a #${name} character`;
+    return `This action updates a #${name} character ${updateCharacterDto}`;
   }
 
   remove(name: string) {

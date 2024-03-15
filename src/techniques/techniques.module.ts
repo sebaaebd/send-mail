@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { TechniquesService } from './techniques.service';
+import { TechniquesService } from './services/techniques.service';
 import { Techniques, TechniquesSchema } from './schemas/techniques.schema';
 import { MongooseModule } from '@nestjs/mongoose';
 
