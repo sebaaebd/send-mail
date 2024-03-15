@@ -1,9 +1,16 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { CreateCharacterDto } from './dto/create-character.dto';
 import { UpdateCharacterDto } from './dto/update-character.dto';
 import { Characters, CharactersDocument } from './schemas/characters.schema';
+import { TechniquesService } from './techniques.service';
+import { PlanetsService } from './planets.service';
 import { Model } from 'mongoose';
+import { UniverseService } from './universe.service';
 
 // aqui se definen los servicios como get, post, put, patch que luego se instancian en el controlador
 @Injectable()
@@ -11,20 +18,70 @@ export class CharactersService {
   constructor(
     @InjectModel(Characters.name)
     private readonly charactersModel: Model<CharactersDocument>,
+    private readonly techniquesService: TechniquesService,
+    private readonly planetsService: PlanetsService,
+    private readonly universeService: UniverseService,
   ) {}
 
   async create(createCharacterDto: CreateCharacterDto) {
-    const { name } = createCharacterDto;
+    const { name, techniques, planet, universe } = createCharacterDto;
+
+    // Revisa si las técnicas existen en la base de datos
+    const existingTechniques =
+      await this.techniquesService.findExistingTechniques(techniques);
+
+    // si no esta, lanza error
+    const invalidTechniques = techniques.filter(
+      (technique) => !existingTechniques.includes(technique),
+    );
+    if (invalidTechniques.length > 0) {
+      throw new ConflictException(
+        `Técnicas Inválidas: ${invalidTechniques.join(', ')}`,
+      );
+    }
+
+    // usa el servicio de planetas para revisar si estan en la db
+    const existingPlanets =
+      await this.planetsService.findExistingPlanets(planet);
+
+    // si el planeta no está, avisa
+    const invalidPlanets = Array.isArray(planet)
+      ? planet.filter((planetName) => !existingPlanets.includes(planetName))
+      : [planet].filter((planetName) => !existingPlanets.includes(planetName));
+    if (invalidPlanets.length > 0) {
+      throw new ConflictException(
+        `El planeta indicado no existe: ${invalidPlanets.join(', ')}`,
+      );
+    }
+
+    // lo mismo pero para universos
+    const existingUniverses =
+      await this.universeService.findExistingUniverse(universe);
+
+    const invalidUniverse = Array.isArray(universe)
+      ? universe.filter(
+          (universeName) => !existingPlanets.includes(universeName),
+        )
+      : [universe].filter(
+          (universeName) => !existingPlanets.includes(universeName),
+        );
+    if (invalidUniverse.length > 0) {
+      throw new ConflictException(
+        `El universo indicado no existe: ${invalidUniverse.join(', ')}`,
+      );
+    }
+
+    // revisa si el personaje ya existe
     const existingCharacter = await this.charactersModel
       .findOne({ name })
       .exec();
     if (existingCharacter) {
-      return { message: `Character '${name}' already exists` };
+      throw new ConflictException(`El personaje '${name}' ya existe`);
     }
 
-    const characterCreate =
-      await this.charactersModel.create(createCharacterDto);
-    return characterCreate.save();
+    // Crear el personaje
+    const character = new this.charactersModel(createCharacterDto);
+    return character.save();
   }
 
   //Metodo para encontrar a todos los personajes
@@ -83,7 +140,7 @@ export class CharactersService {
     // Mezcla aleatoriamente la lista de personajes filtrados
     const shuffledCharacters = this.shuffleArray(filteredCharacters);
 
-    // Selecciona los primeros 3 personajes de la lista mezclada
+    // Selecciona los primeros 4 personajes de la lista mezclada
     const randomCharacters = shuffledCharacters.slice(0, 4);
 
     // Devuelve los personajes aleatorios seleccionados

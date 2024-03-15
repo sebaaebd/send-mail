@@ -1,18 +1,20 @@
-import { MongooseModule } from '@nestjs/mongoose';
 import { Module } from '@nestjs/common';
-import { CharactersService } from './characters.service';
+import { MongooseModule } from '@nestjs/mongoose';
 import { CharactersController } from './characters.controller';
+import { CharactersService } from './characters.service';
 import { Characters, CharactersSchema } from './schemas/characters.schema';
+import { TechniquesModule } from './techniques.module';
+import { PlanetsModule } from './planets.module';
+import { UniverseModule } from './universe.module';
 
-// aquí en el array importamos nuestro o nuestros schemas para posteriormente, interactuar con ellos
 @Module({
   imports: [
     MongooseModule.forFeature([
-      {
-        name: Characters.name,
-        schema: CharactersSchema,
-      },
+      { name: Characters.name, schema: CharactersSchema },
     ]),
+    TechniquesModule,
+    PlanetsModule,
+    UniverseModule,
   ],
   controllers: [CharactersController],
   providers: [CharactersService],
