@@ -12,6 +12,7 @@ import {
 } from 'src/techniques/schemas/techniques.schema';
 import { UniverseService } from 'src/universe/services/universe.service';
 import { Universe, UniverseSchema } from 'src/universe/schemas/universe.schema';
+import { FindOneService } from './services/character-find-one.service';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { Universe, UniverseSchema } from 'src/universe/schemas/universe.schema';
     PlanetsService,
     TechniquesService,
     UniverseService,
+    FindOneService,
   ],
 })
 export class CharactersModule {}

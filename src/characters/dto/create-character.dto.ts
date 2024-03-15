@@ -51,7 +51,7 @@ export class CreateCharacterDto {
 
   @IsString()
   @IsNotEmpty()
-  afiliation: string;
+  affiliation: string;
 
   @IsString()
   @IsNotEmpty()
