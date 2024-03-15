@@ -9,8 +9,12 @@ import { UpdateCharacterDto } from './dto/update-character.dto';
 import { Characters, CharactersDocument } from './schemas/characters.schema';
 import { TechniquesService } from './techniques.service';
 import { PlanetsService } from './planets.service';
-import { Model } from 'mongoose';
 import { UniverseService } from './universe.service';
+import { Model } from 'mongoose';
+import {
+  CharacterResponse,
+  CharactersResponse,
+} from './interface/characters.interface';
 
 // aqui se definen los servicios como get, post, put, patch que luego se instancian en el controlador
 @Injectable()
@@ -60,10 +64,10 @@ export class CharactersService {
 
     const invalidUniverse = Array.isArray(universe)
       ? universe.filter(
-          (universeName) => !existingPlanets.includes(universeName),
+          (universeName) => !existingUniverses.includes(universeName),
         )
       : [universe].filter(
-          (universeName) => !existingPlanets.includes(universeName),
+          (universeName) => !existingUniverses.includes(universeName),
         );
     if (invalidUniverse.length > 0) {
       throw new ConflictException(

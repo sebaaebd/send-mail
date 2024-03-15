@@ -1,6 +1,6 @@
 /*creamos una interfaz la cual contiene los tipos de datos que se entregarán en la respuesta del método findAll en nuestro
 character service*/
-interface CharactersResponse {
+export interface CharactersResponse {
   name: string;
   ki: {
     base: string;
@@ -11,7 +11,7 @@ interface CharactersResponse {
 }
 
 //interface para un solo personaje del metodo findOne
-interface CharacterResponse {
+export interface CharacterResponse {
   name: string;
   image: string;
   race: string;

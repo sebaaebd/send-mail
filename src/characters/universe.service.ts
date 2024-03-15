@@ -15,11 +15,10 @@ export class UniverseService {
       // transforma los universos en array
       const universeArray = Array.isArray(universe) ? universe : [universe];
 
-      // busca los planetas en la base de datos
+      // busca los universos en la base de datos
       const existingUniverses = await this.universeModel
         .find({ name: { $in: universeArray } })
         .exec();
-
       // obtiene los nombres de los universos y los retorna
       const existingUniverse = existingUniverses.map(
         (universe) => universe.name,
