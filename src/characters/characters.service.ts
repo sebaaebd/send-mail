@@ -27,10 +27,18 @@ export class CharactersService {
     private readonly universeService: UniverseService,
   ) {}
 
-  async create(createCharacterDto: CreateCharacterDto) {
-    const { name, techniques, planet, universe } = createCharacterDto;
+  //para transformar la primera en mayusculas
+  private capitalize(value: string): string {
+    return value.charAt(0).toUpperCase() + value.slice(1);
+  }
 
-    // Revisa si las técnicas existen en la base de datos
+  private capitalizeArray(values: string[]): string[] {
+    return values.map((value) => this.capitalize(value));
+  }
+
+  async create(createCharacterDto: CreateCharacterDto) {
+    const { name, techniques, planet, race, universe } = createCharacterDto;
+
     const existingTechniques =
       await this.techniquesService.findExistingTechniques(techniques);
 
@@ -45,43 +53,50 @@ export class CharactersService {
     }
 
     // usa el servicio de planetas para revisar si estan en la db
-    const existingPlanets =
-      await this.planetsService.findExistingPlanets(planet);
+    const existingPlanets = await this.planetsService.findExistingPlanets(
+      Array.isArray(planet)
+        ? planet.map((name) => name.toLowerCase())
+        : planet.toLowerCase(),
+    );
 
     // si el planeta no está, avisa
-    const invalidPlanets = Array.isArray(planet)
-      ? planet.filter((planetName) => !existingPlanets.includes(planetName))
-      : [planet].filter((planetName) => !existingPlanets.includes(planetName));
-    if (invalidPlanets.length > 0) {
+    if (!existingPlanets.length) {
+      const planetNames = Array.isArray(planet) ? planet.join(', ') : planet;
       throw new ConflictException(
-        `El planeta indicado no existe: ${invalidPlanets.join(', ')}`,
+        `El planeta indicado no existe: ${planetNames}`,
       );
     }
 
     // lo mismo pero para universos
-    const existingUniverses =
-      await this.universeService.findExistingUniverse(universe);
 
-    const invalidUniverse = Array.isArray(universe)
-      ? universe.filter(
-          (universeName) => !existingUniverses.includes(universeName),
-        )
-      : [universe].filter(
-          (universeName) => !existingUniverses.includes(universeName),
-        );
-    if (invalidUniverse.length > 0) {
+    const existingUniverses = await this.universeService.findExistingUniverse(
+      Array.isArray(universe)
+        ? universe.map((name) => name.toLowerCase())
+        : universe.toLowerCase(),
+    );
+
+    if (!existingUniverses.length) {
+      const universeNames = Array.isArray(universe)
+        ? universe.join(', ')
+        : universe;
       throw new ConflictException(
-        `El universo indicado no existe: ${invalidUniverse.join(', ')}`,
+        `El universo indicado no existe: ${universeNames}`,
       );
     }
 
     // revisa si el personaje ya existe
     const existingCharacter = await this.charactersModel
-      .findOne({ name })
+      .findOne({ name: { $regex: new RegExp(name, 'i') } })
       .exec();
     if (existingCharacter) {
       throw new ConflictException(`El personaje '${name}' ya existe`);
     }
+
+    createCharacterDto.name = this.capitalize(name);
+    createCharacterDto.planet = this.capitalize(planet);
+    createCharacterDto.universe = this.capitalize(universe);
+    createCharacterDto.race = this.capitalize(race);
+    createCharacterDto.techniques = this.capitalizeArray(techniques);
 
     // Crear el personaje
     const character = new this.charactersModel(createCharacterDto);

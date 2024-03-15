@@ -14,17 +14,18 @@ export class TechniquesService {
     techniques: string | string[],
   ): Promise<string[]> {
     try {
-      // transforma las tecnicas en array
       const techniqueArray = Array.isArray(techniques)
         ? techniques
         : [techniques];
 
-      // busca las técnicas en la base de datos
+      const techniqueName = techniqueArray.map(
+        (techniques) => new RegExp(techniques, 'i'),
+      );
+
       const existingTechniques = await this.techniquesModel
-        .find({ technique: { $in: techniqueArray } })
+        .find({ technique: { $in: techniqueName } })
         .exec();
 
-      // obtiene los nombres de las técnicas y los retorna
       const existingTechniqueNames = existingTechniques.map(
         (technique) => technique.technique,
       );

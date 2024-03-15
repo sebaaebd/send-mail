@@ -12,19 +12,21 @@ export class UniverseService {
 
   async findExistingUniverse(universe: string | string[]): Promise<string[]> {
     try {
-      // transforma los universos en array
       const universeArray = Array.isArray(universe) ? universe : [universe];
 
-      // busca los universos en la base de datos
+      const Universes = universeArray.map(
+        (universe) => new RegExp(universe, 'i'),
+      );
+
       const existingUniverses = await this.universeModel
-        .find({ name: { $in: universeArray } })
+        .find({ name: { $in: Universes } })
         .exec();
-      // obtiene los nombres de los universos y los retorna
-      const existingUniverse = existingUniverses.map(
+
+      const existingUniverseNames = existingUniverses.map(
         (universe) => universe.name,
       );
 
-      return existingUniverse;
+      return existingUniverseNames;
     } catch (error) {
       throw new Error(`Error al buscar los universos: ${error.message}`);
     }
