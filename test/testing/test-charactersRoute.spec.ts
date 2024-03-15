@@ -1,8 +1,8 @@
 /*PRUEBA UNITARIA RUTA /CHARACTERS */
 
 import { Test, TestingModule } from '@nestjs/testing';
-import { CharactersController } from 'src/characters/characters.controller';
-import { CharactersService } from 'src/characters/characters.service';
+import { CharactersController } from 'src/characters/controllers/characters.controller';
+import { CharactersService } from 'src/characters/services/characters.service';
 
 //creamos el mock para emular los servicios originales
 const mockCharacterService = {

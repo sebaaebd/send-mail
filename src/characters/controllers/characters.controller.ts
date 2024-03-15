@@ -10,9 +10,9 @@ import {
   ValidationPipe,
   Query,
 } from '@nestjs/common';
-import { CharactersService } from './characters.service';
-import { CreateCharacterDto } from './dto/create-character.dto';
-import { UpdateCharacterDto } from './dto/update-character.dto';
+import { CharactersService } from '../services/characters.service';
+import { CreateCharacterDto } from '../dto/create-character.dto';
+import { UpdateCharacterDto } from '../dto/update-character.dto';
 
 //este es el controlador que contiene todos los servicios que asociados a characters
 

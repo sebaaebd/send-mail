@@ -2,10 +2,13 @@
 se cumplen o parametros designados se cumplen*/
 import {
   IsString,
-  IsArray,
   IsNotEmpty,
   IsUrl,
   ValidateNested,
+  ArrayMinSize,
+  ArrayUnique,
+  ArrayMaxSize,
+  IsArray,
 } from 'class-validator';
 import { Type } from 'class-transformer';
 
@@ -56,5 +59,12 @@ export class CreateCharacterDto {
 
   @IsArray()
   @IsNotEmpty()
+  @IsString({ each: true })
   techniques: string[];
+
+  @IsUrl({}, { each: true })
+  @ArrayUnique()
+  @ArrayMinSize(4, { message: 'There must be 4 URLs in stage' })
+  @ArrayMaxSize(4, { message: "Can't have more than 4 URLs in stage." })
+  stage: string;
 }
