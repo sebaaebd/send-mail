@@ -1,8 +1,4 @@
-import {
-  ConflictException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { ConflictException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { CreateCharacterDto } from '../dto/create-character.dto';
 import { UpdateCharacterDto } from '../dto/update-character.dto';
@@ -11,10 +7,8 @@ import { TechniquesService } from '../../techniques/services/techniques.service'
 import { PlanetsService } from '../../planet/services/planets.service';
 import { UniverseService } from '../../universe/services/universe.service';
 import { Model } from 'mongoose';
-import {
-  CharacterResponse,
-  CharactersResponse,
-} from '../interface/characters.interface';
+import { CharactersResponse } from '../interface/characters.interface';
+import { StringUtils } from 'src/utils/string.utils';
 
 // aqui se definen los servicios como get, post, put, patch que luego se instancian en el controlador
 @Injectable()
@@ -26,15 +20,6 @@ export class CharactersService {
     private readonly planetsService: PlanetsService,
     private readonly universeService: UniverseService,
   ) {}
-
-  //para transformar la primera en mayusculas
-  private capitalize(value: string): string {
-    return value.charAt(0).toUpperCase() + value.slice(1);
-  }
-
-  private capitalizeArray(values: string[]): string[] {
-    return values.map((value) => this.capitalize(value));
-  }
 
   async create(createCharacterDto: CreateCharacterDto) {
     const { name, techniques, planet, race, universe } = createCharacterDto;
@@ -92,11 +77,11 @@ export class CharactersService {
       throw new ConflictException(`El personaje '${name}' ya existe`);
     }
 
-    createCharacterDto.name = this.capitalize(name);
-    createCharacterDto.planet = this.capitalize(planet);
-    createCharacterDto.universe = this.capitalize(universe);
-    createCharacterDto.race = this.capitalize(race);
-    createCharacterDto.techniques = this.capitalizeArray(techniques);
+    createCharacterDto.name = StringUtils.capitalize(name);
+    createCharacterDto.planet = StringUtils.capitalize(planet);
+    createCharacterDto.universe = StringUtils.capitalize(universe);
+    createCharacterDto.race = StringUtils.capitalize(race);
+    createCharacterDto.techniques = StringUtils.capitalizeArray(techniques);
 
     // Crear el personaje
     const character = new this.charactersModel(createCharacterDto);
@@ -116,29 +101,6 @@ export class CharactersService {
       image: character.image,
       afiliation: character.afiliation,
     }));
-  }
-
-  // Método para encontrar un personaje
-  async findOne(name: string): Promise<CharacterResponse | null> {
-    const existingCharacter = await this.charactersModel
-      .findOne({ name: { $regex: new RegExp(name, 'i') } })
-      .exec();
-
-    if (!existingCharacter) {
-      throw new NotFoundException();
-    }
-
-    // Mapea el personaje encontrado a la estructura de la interfaz creada
-    return {
-      name: existingCharacter.name,
-      image: existingCharacter.image,
-      race: existingCharacter.race,
-      planet: existingCharacter.planet,
-      universe: existingCharacter.universe,
-      description: existingCharacter.description,
-      techniques: existingCharacter.techniques,
-      stage: existingCharacter.stage,
-    };
   }
 
   //metodo para filtrar por planeta
