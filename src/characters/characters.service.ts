@@ -4,6 +4,10 @@ import { CreateCharacterDto } from './dto/create-character.dto';
 import { UpdateCharacterDto } from './dto/update-character.dto';
 import { Characters, CharactersDocument } from './schemas/characters.schema';
 import { Model } from 'mongoose';
+import {
+  CharacterResponse,
+  CharactersResponse,
+} from './interface/characters.interface';
 
 // aqui se definen los servicios como get, post, put, patch que luego se instancian en el controlador
 @Injectable()
