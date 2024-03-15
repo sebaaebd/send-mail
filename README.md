@@ -52,7 +52,8 @@ El proyecto esta hecho en `NestJS`por lo que debes tener ciertas consideración.
 | RUTA      | METODO | DESCRIPCIÓN | RESPONSE |
 |:------------- |:---------------:|:---------------:|:-------------:|
 | http://localhost:3000/characters| GET |  Retorna un arreglo con todos los personajes |<pre>[ { "name": "Goku",  "ki": { "base": " ", "max": " "  },  "image": " ","afiliation": " "},{ ... }]
-</pre>|
+</pre>
+|
 | http://localhost:3000/characters/:name|GET |  Retorna solo un objeto con el persona descrito en nombre ejemplo `goku`             | <pre> { name: '', ki: {base: '',max: ''},image: '',afiliation: ''}</pre> |
 | http://localhost:3000/charactera/planet/:name?character=:character|    GET          |   Retorna 4 recomendaciones de personbajes que sean del planeta enviado `:name`y que no sea el personaje seleccionado `:character`            | <pre>[{"name": "", "ki": {"base": "","max": "" }, "image": "",  "afiliation": ""},  {...},{...},{...}]</pre>|
 | http://localhost:3000/characters/|    POST          |  |              |
