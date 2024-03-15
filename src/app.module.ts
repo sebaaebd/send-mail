@@ -4,6 +4,7 @@ import { CharactersModule } from './characters/characters.module';
 import { ConfigModule } from '@nestjs/config';
 import { PlanetsModule } from './planet/planets.module';
 import { TechniquesModule } from './techniques/techniques.module';
+import { UniverseModule } from './universe/universe.module';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { TechniquesModule } from './techniques/techniques.module';
     CharactersModule,
     PlanetsModule,
     TechniquesModule,
+    UniverseModule,
   ],
   controllers: [],
   providers: [],

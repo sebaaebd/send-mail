@@ -9,7 +9,7 @@ import { UpdateCharacterDto } from '../dto/update-character.dto';
 import { Characters, CharactersDocument } from '../schemas/characters.schema';
 import { TechniquesService } from '../../techniques/services/techniques.service';
 import { PlanetsService } from '../../planet/services/planets.service';
-import { UniverseService } from '../universe.service';
+import { UniverseService } from '../../universe/services/universe.service';
 import { Model } from 'mongoose';
 import {
   CharacterResponse,

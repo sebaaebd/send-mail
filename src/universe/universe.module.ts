@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { UniverseService } from './universe.service';
+import { UniverseService } from './services/universe.service';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Universe, UniverseSchema } from './schemas/universe.schema';
 
