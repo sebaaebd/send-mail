@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { CharactersModule } from './characters/characters.module';
 import { ConfigModule } from '@nestjs/config';
+import { PlanetsModule } from './planet/planets.module';
 
 @Module({
   imports: [
@@ -11,6 +12,7 @@ import { ConfigModule } from '@nestjs/config';
     }),
     MongooseModule.forRoot(process.env.MONGODB_URI),
     CharactersModule,
+    PlanetsModule,
   ],
   controllers: [],
   providers: [],

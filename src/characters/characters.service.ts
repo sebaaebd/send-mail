@@ -8,7 +8,7 @@ import { CreateCharacterDto } from './dto/create-character.dto';
 import { UpdateCharacterDto } from './dto/update-character.dto';
 import { Characters, CharactersDocument } from './schemas/characters.schema';
 import { TechniquesService } from './techniques.service';
-import { PlanetsService } from './planets.service';
+import { PlanetsService } from '../planet/services/planets.service';
 import { UniverseService } from './universe.service';
 import { Model } from 'mongoose';
 import {

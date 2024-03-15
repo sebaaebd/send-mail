@@ -1,8 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { Planets, PlanetsDocument } from './schemas/planets.schema';
-import { connection } from 'mongoose';
+import { Planets, PlanetsDocument } from '../schemas/planets.schema';
 
 @Injectable()
 export class PlanetsService {
