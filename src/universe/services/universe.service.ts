@@ -10,23 +10,22 @@ export class UniverseService {
     private universeModel: Model<UniverseDocument>,
   ) {}
 
-  async findExistingUniverse(universe: string | string[]): Promise<string[]> {
+  async checkUniverseExistence(universe: string): Promise<boolean> {
     try {
-      const universeArray = Array.isArray(universe) ? universe : [universe];
+      const universeName = universe.toLowerCase();
 
-      const Universes = universeArray.map(
-        (universe) => new RegExp(universe, 'i'),
-      );
-
-      const existingUniverses = await this.universeModel
-        .find({ name: { $in: Universes } })
+      const existingUniverse = await this.universeModel
+        .findOne({
+          name: {
+            $regex: new RegExp(
+              '^' + universeName.replace(/ /g, '\\s') + '$',
+              'i',
+            ),
+          },
+        })
         .exec();
 
-      const existingUniverseNames = existingUniverses.map(
-        (universe) => universe.name,
-      );
-
-      return existingUniverseNames;
+      return !!existingUniverse;
     } catch (error) {
       throw new Error(`Error al buscar los universos: ${error.message}`);
     }

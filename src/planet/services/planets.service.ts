@@ -10,24 +10,20 @@ export class PlanetsService {
     private planetsModel: Model<PlanetsDocument>,
   ) {}
 
-  async findExistingPlanets(planets: string | string[]): Promise<string[]> {
+  async checkPlanetExistence(planet: string): Promise<boolean> {
     try {
-      // Transforma los planetas en array para revisar
-      const planetArray = Array.isArray(planets) ? planets : [planets];
+      ///pasamos a minusculas
+      const planetName = planet.toLowerCase();
 
-      //evita la distincion entre mayusculas y minusculas
-      const planetName = planetArray.map((planet) => new RegExp(planet, 'i'));
-
-      // Busca los planetas en la base de datos
-      const existingPlanets = await this.planetsModel
-        .find({ name: { $in: planetName } })
+      // buscamos en la db
+      const existingPlanet = await this.planetsModel
+        .findOne({ name: { $regex: new RegExp('^' + planetName + '$', 'i') } })
         .exec();
 
-      // Obtiene los nombres de los planetas existentes
-      const existingPlanetNames = existingPlanets.map((planet) => planet.name);
-      return existingPlanetNames;
+      //devolvemos si existe o no
+      return !!existingPlanet;
     } catch (error) {
-      throw new Error(`Error al buscar los planetas: ${error.message}`);
+      throw new Error(`Error al buscar el planeta: ${error.message}`);
     }
   }
 }

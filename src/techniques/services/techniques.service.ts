@@ -10,27 +10,37 @@ export class TechniquesService {
     private techniquesModel: Model<TechniquesDocument>,
   ) {}
 
-  async findExistingTechniques(
-    techniques: string | string[],
-  ): Promise<string[]> {
+  async checkTechniqueExistence(techniques: string[]): Promise<string[]> {
     try {
-      const techniqueArray = Array.isArray(techniques)
-        ? techniques
-        : [techniques];
-
-      const techniqueName = techniqueArray.map(
-        (techniques) => new RegExp(techniques, 'i'),
+      const techniqueNames = techniques.map((technique) =>
+        technique.toLowerCase(),
       );
 
+      // buscamos en la db
       const existingTechniques = await this.techniquesModel
-        .find({ technique: { $in: techniqueName } })
+        .find({
+          name: {
+            $in: techniqueNames.map(
+              (techniqueName) =>
+                new RegExp('^' + techniqueName.replace(/ /g, '\\s') + '$', 'i'),
+            ),
+          },
+        })
         .exec();
 
-      const existingTechniqueNames = existingTechniques.map(
-        (technique) => technique.technique,
+      // filtramos las que no estan en la db
+      const nonExistingTechniques = techniqueNames.filter(
+        (techniqueName) =>
+          !existingTechniques.some((technique) =>
+            new RegExp(
+              '^' + techniqueName.replace(/ /g, '\\s') + '$',
+              'i',
+            ).test(technique.name),
+          ),
       );
 
-      return existingTechniqueNames;
+      // devolvemos lo que no existe
+      return nonExistingTechniques;
     } catch (error) {
       throw new Error(`Error al buscar las técnicas: ${error.message}`);
     }

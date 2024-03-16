@@ -24,48 +24,26 @@ export class CharactersService {
   async create(createCharacterDto: CreateCharacterDto) {
     const { name, techniques, planet, race, universe } = createCharacterDto;
 
-    const existingTechniques =
-      await this.techniquesService.findExistingTechniques(techniques);
-
-    // si no esta, lanza error
-    const invalidTechniques = techniques.filter(
-      (technique) => !existingTechniques.includes(technique),
-    );
-    if (invalidTechniques.length > 0) {
-      throw new ConflictException(
-        `Técnicas Inválidas: ${invalidTechniques.join(', ')}`,
-      );
+    //validación planetas
+    const planetExists = await this.planetsService.checkPlanetExistence(planet);
+    if (!planetExists) {
+      throw new ConflictException(`El planeta '${planet}' no existe.`);
     }
 
-    // usa el servicio de planetas para revisar si estan en la db
-    const existingPlanets = await this.planetsService.findExistingPlanets(
-      Array.isArray(planet)
-        ? planet.map((name) => name.toLowerCase())
-        : planet.toLowerCase(),
-    );
-
-    // si el planeta no está, avisa
-    if (!existingPlanets.length) {
-      const planetNames = Array.isArray(planet) ? planet.join(', ') : planet;
-      throw new ConflictException(
-        `El planeta indicado no existe: ${planetNames}`,
-      );
+    //validación universos
+    const universeExists =
+      await this.universeService.checkUniverseExistence(universe);
+    if (!universeExists) {
+      throw new ConflictException(`El universo '${universe}' no existe.`);
     }
 
-    // lo mismo pero para universos
+    //validación técnicas
+    const nonExistingTechniques =
+      await this.techniquesService.checkTechniqueExistence(techniques);
 
-    const existingUniverses = await this.universeService.findExistingUniverse(
-      Array.isArray(universe)
-        ? universe.map((name) => name.toLowerCase())
-        : universe.toLowerCase(),
-    );
-
-    if (!existingUniverses.length) {
-      const universeNames = Array.isArray(universe)
-        ? universe.join(', ')
-        : universe;
+    if (nonExistingTechniques.length > 0) {
       throw new ConflictException(
-        `El universo indicado no existe: ${universeNames}`,
+        `Las siguientes técnicas no existen: ${nonExistingTechniques.join(', ')}`,
       );
     }
 
@@ -99,7 +77,7 @@ export class CharactersService {
         max: character.ki.max,
       },
       image: character.image,
-      afiliation: character.afiliation,
+      affiliation: character.affiliation,
     }));
   }
 
@@ -132,7 +110,7 @@ export class CharactersService {
         max: character.ki.max,
       },
       image: character.image,
-      afiliation: character.afiliation,
+      affiliation: character.affiliation,
     }));
   }
 
