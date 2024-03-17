@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { PlanetsService } from './services/planets.service';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Planets, PlanetsSchema } from './schemas/planets.schema';
+import { PlanetController } from './controllers/planet.controller';
 
 @Module({
   imports: [
@@ -9,5 +10,6 @@ import { Planets, PlanetsSchema } from './schemas/planets.schema';
   ],
   providers: [PlanetsService],
   exports: [PlanetsService],
+  controllers: [PlanetController],
 })
 export class PlanetsModule {}

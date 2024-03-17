@@ -5,7 +5,6 @@ import { ConfigModule } from '@nestjs/config';
 import { PlanetsModule } from './planet/planets.module';
 import { TechniquesModule } from './techniques/techniques.module';
 import { UniverseModule } from './universe/universe.module';
-
 @Module({
   imports: [
     ConfigModule.forRoot({
