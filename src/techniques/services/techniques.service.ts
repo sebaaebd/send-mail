@@ -1,7 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import { ConflictException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Techniques, TechniquesDocument } from '../schemas/techniques.schema';
+import { CreateTechniqueDto } from '../dto/create-technique.dto';
 
 @Injectable()
 export class TechniquesService {
@@ -44,5 +45,24 @@ export class TechniquesService {
     } catch (error) {
       throw new Error(`Error al buscar las técnicas: ${error.message}`);
     }
+  }
+
+  async create(createTechniqueDto: CreateTechniqueDto) {
+    const { name } = createTechniqueDto;
+
+    // revisa si el personaje ya existe
+    const existingTechnique = await this.techniquesModel
+      .findOne({
+        name: {
+          $regex: new RegExp('^' + name.replace(/ /g, '\\s') + '$', 'i'),
+        },
+      })
+      .exec();
+    if (existingTechnique) {
+      throw new ConflictException(`La técnica '${name}' ya existe`);
+    }
+
+    const technique = new this.techniquesModel(createTechniqueDto);
+    return technique.save();
   }
 }
