@@ -13,12 +13,16 @@ import {
 import { CharactersService } from '../services/characters.service';
 import { CreateCharacterDto } from '../dto/create-character.dto';
 import { UpdateCharacterDto } from '../dto/update-character.dto';
+import { CharacterFindOneService } from '../services/character-find-one.service';
 
 //este es el controlador que contiene todos los servicios que asociados a characters
 
 @Controller('characters')
 export class CharactersController {
-  constructor(private readonly charactersService: CharactersService) {}
+  constructor(
+    private readonly charactersService: CharactersService,
+    private readonly characterFindOneService: CharacterFindOneService,
+  ) {}
 
   @Post()
   @UsePipes(new ValidationPipe())
@@ -33,7 +37,7 @@ export class CharactersController {
 
   @Get(':name')
   findOne(@Param('name') name: string) {
-    return this.charactersService.findOne(name);
+    return this.characterFindOneService.byName(name);
   }
 
   @Get('planet/:name')

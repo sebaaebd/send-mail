@@ -32,7 +32,7 @@ export class Characters {
   race: string;
 
   @Prop({ required: true })
-  afiliation: string;
+  affiliation: string;
 
   @Prop({ required: true })
   description: string;
