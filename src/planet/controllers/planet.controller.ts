@@ -5,16 +5,16 @@ import {
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
-import { PlanetsService } from '../services/planets.service';
 import { CreatePlanetDto } from '../dto/create-planet.dto';
+import { CreatePlanetsService } from '../services/create-planets.service';
 
-@Controller('planet')
+@Controller('planets')
 export class PlanetController {
-  constructor(private readonly planetService: PlanetsService) {}
+  constructor(private readonly createPlanetService: CreatePlanetsService) {}
 
   @Post()
   @UsePipes(new ValidationPipe())
   create(@Body() createPlanetDto: CreatePlanetDto) {
-    return this.planetService.create(createPlanetDto);
+    return this.createPlanetService.create(createPlanetDto);
   }
 }

@@ -13,6 +13,7 @@ import {
 import { UniverseService } from 'src/universe/services/universe.service';
 import { Universe, UniverseSchema } from 'src/universe/schemas/universe.schema';
 import { CharacterFindOneService } from './services/character-find-one.service';
+import { CharacterExitsService } from './services/character-exits.service';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { CharacterFindOneService } from './services/character-find-one.service';
     TechniquesService,
     UniverseService,
     CharacterFindOneService,
+    CharacterExitsService,
   ],
 })
 export class CharactersModule {}

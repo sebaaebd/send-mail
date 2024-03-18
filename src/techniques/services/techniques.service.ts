@@ -2,7 +2,7 @@ import { ConflictException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Techniques, TechniquesDocument } from '../schemas/techniques.schema';
-import { CreateTechniqueDto } from '../dto/create-technique.dto';
+import { StringUtils } from 'src/utils/string.utils';
 
 @Injectable()
 export class TechniquesService {
@@ -11,58 +11,30 @@ export class TechniquesService {
     private techniquesModel: Model<TechniquesDocument>,
   ) {}
 
-  async checkTechniqueExistence(techniques: string[]): Promise<string[]> {
-    try {
-      const techniqueNames = techniques.map((technique) =>
-        technique.toLowerCase(),
+  async validateTechniques(techniques: string[]) {
+    const techniquesNotFound = await this.getTechniquesExits(techniques);
+
+    if (techniquesNotFound.length > 0) {
+      throw new ConflictException(
+        `Estas tecnicas no fueron encontradas en la BD ${techniquesNotFound.join(', ')}`,
       );
-
-      // buscamos en la db
-      const existingTechniques = await this.techniquesModel
-        .find({
-          name: {
-            $in: techniqueNames.map(
-              (techniqueName) =>
-                new RegExp('^' + techniqueName.replace(/ /g, '\\s') + '$', 'i'),
-            ),
-          },
-        })
-        .exec();
-
-      // filtramos las que no estan en la db
-      const nonExistingTechniques = techniqueNames.filter(
-        (techniqueName) =>
-          !existingTechniques.some((technique) =>
-            new RegExp(
-              '^' + techniqueName.replace(/ /g, '\\s') + '$',
-              'i',
-            ).test(technique.name),
-          ),
-      );
-
-      // devolvemos lo que no existe
-      return nonExistingTechniques;
-    } catch (error) {
-      throw new Error(`Error al buscar las técnicas: ${error.message}`);
     }
   }
 
-  async create(createTechniqueDto: CreateTechniqueDto) {
-    const { name } = createTechniqueDto;
+  private async getTechniquesExits(techniques: string[]): Promise<string[]> {
+    const techniqueNotFound = [];
 
-    // revisa si el personaje ya existe
-    const existingTechnique = await this.techniquesModel
-      .findOne({
-        name: {
-          $regex: new RegExp('^' + name.replace(/ /g, '\\s') + '$', 'i'),
-        },
-      })
-      .exec();
-    if (existingTechnique) {
-      throw new ConflictException(`La técnica '${name}' ya existe`);
+    for (const name of techniques) {
+      const technique = await this.techniquesModel
+        .findOne({
+          name: { $regex: new RegExp(StringUtils.removeWhiteSpace(name), 'i') },
+        })
+        .exec();
+      if (!technique) {
+        techniqueNotFound.push(name);
+      }
     }
 
-    const technique = new this.techniquesModel(createTechniqueDto);
-    return technique.save();
+    return techniqueNotFound;
   }
 }
