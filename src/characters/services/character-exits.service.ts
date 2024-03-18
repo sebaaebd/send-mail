@@ -12,7 +12,7 @@ export class CharacterExitsService {
     private readonly characterFindOneService: CharacterFindOneService,
   ) {}
   async unique(name: string) {
-    const character = await this.characterFindOneService.get(name);
+    const character = await this.characterFindOneService.byName(name);
 
     if (character) {
       throw new ConflictException(`El personaje ${name}, ya existe`);

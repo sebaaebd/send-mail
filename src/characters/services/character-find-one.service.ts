@@ -11,10 +11,8 @@ export class CharacterFindOneService {
     private readonly charactersModel: Model<CharactersDocument>,
   ) {}
   // Método para encontrar un personaje
-  async get(name: string): Promise<CharacterResponse | null> {
-    const existingCharacter = await this.charactersModel
-      .findOne({ name: { $regex: new RegExp(name, 'i') } })
-      .exec();
+  private async get(name: string): Promise<CharacterResponse | null> {
+    const existingCharacter = await this.byName(name);
 
     if (!existingCharacter) {
       throw new NotFoundException();
@@ -31,5 +29,11 @@ export class CharacterFindOneService {
       techniques: existingCharacter.techniques,
       stage: existingCharacter.stage,
     };
+  }
+
+  async byName(name: string): Promise<CharactersDocument> {
+    return await this.charactersModel
+      .findOne({ name: { $regex: new RegExp(name, 'i') } })
+      .exec();
   }
 }

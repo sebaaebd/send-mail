@@ -37,7 +37,7 @@ export class CharactersController {
 
   @Get(':name')
   findOne(@Param('name') name: string) {
-    return this.characterFindOneService.get(name);
+    return this.characterFindOneService.byName(name);
   }
 
   @Get('planet/:name')

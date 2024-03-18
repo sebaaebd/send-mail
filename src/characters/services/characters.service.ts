@@ -44,6 +44,8 @@ export class CharactersService {
     try {
       await this.validateDataForSaving(createCharacterDTO);
 
+
+
       await this.characterSave(createCharacterDTO);
     } catch (error) {
       throw new BadRequestException(error);
@@ -53,6 +55,7 @@ export class CharactersService {
   async characterSave(createCharacterDTO: CreateCharacterDto) {
     const { techniques, planet, name, universe, race } = createCharacterDTO;
 
+    console.log('guardando a personaje')
     createCharacterDTO.name = StringUtils.capitalize(name);
     createCharacterDTO.planet = StringUtils.capitalize(planet);
     createCharacterDTO.universe = StringUtils.capitalize(universe);
