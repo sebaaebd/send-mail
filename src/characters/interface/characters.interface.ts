@@ -7,7 +7,7 @@ export interface CharactersResponse {
     max: string;
   };
   image: string;
-  afiliation: string;
+  affiliation: string;
 }
 
 //interface para un solo personaje del metodo findOne

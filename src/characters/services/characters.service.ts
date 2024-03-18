@@ -1,13 +1,21 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
+
+import { PlanetsService } from '../../planet/services/planets.service';
+import { TechniquesService } from '../../techniques/services/techniques.service';
+import { UniverseService } from '../../universe/services/universe.service';
+
+import { CharacterFindOneService } from './character-find-one.service';
+import { CharacterExitsService } from './character-exits.service';
+
+import { Characters, CharactersDocument } from '../schemas/characters.schema';
+
 import { CreateCharacterDto } from '../dto/create-character.dto';
 import { UpdateCharacterDto } from '../dto/update-character.dto';
-import { Characters, CharactersDocument } from '../schemas/characters.schema';
-import { TechniquesService } from '../../techniques/services/techniques.service';
-import { PlanetsService } from '../../planet/services/planets.service';
-import { UniverseService } from '../../universe/services/universe.service';
-import { Model } from 'mongoose';
+
 import { CharactersResponse } from '../interface/characters.interface';
+
 import { StringUtils } from 'src/utils/string.utils';
 
 // aqui se definen los servicios como get, post, put, patch que luego se instancian en el controlador
@@ -19,88 +27,57 @@ export class CharactersService {
     private readonly techniquesService: TechniquesService,
     private readonly planetsService: PlanetsService,
     private readonly universeService: UniverseService,
+    private readonly characterFindOneService: CharacterFindOneService,
+    private readonly characterExitsService: CharacterExitsService,
   ) {}
 
-  async create(createCharacterDto: CreateCharacterDto) {
-    const { name, techniques, planet, race, universe } = createCharacterDto;
+  private async validateDataForSaving(createCharacterDTO: CreateCharacterDto) {
+    const { techniques, planet, name, universe } = createCharacterDTO;
 
-    const existingTechniques =
-      await this.techniquesService.findExistingTechniques(techniques);
+    await this.techniquesService.validateTechniques(techniques);
+    await this.planetsService.validExistsPlanet(planet);
+    await this.universeService.isValidUniverse(universe);
+    await this.characterExitsService.unique(name);
+  }
 
-    // si no esta, lanza error
-    const invalidTechniques = techniques.filter(
-      (technique) => !existingTechniques.includes(technique),
-    );
-    if (invalidTechniques.length > 0) {
-      throw new ConflictException(
-        `Técnicas Inválidas: ${invalidTechniques.join(', ')}`,
-      );
+  async create(createCharacterDTO: CreateCharacterDto) {
+    try {
+      await this.validateDataForSaving(createCharacterDTO);
+
+      await this.characterSave(createCharacterDTO);
+    } catch (error) {
+      throw new BadRequestException(error);
     }
+  }
 
-    // usa el servicio de planetas para revisar si estan en la db
-    const existingPlanets = await this.planetsService.findExistingPlanets(
-      Array.isArray(planet)
-        ? planet.map((name) => name.toLowerCase())
-        : planet.toLowerCase(),
-    );
+  async characterSave(createCharacterDTO: CreateCharacterDto) {
+    const { techniques, planet, name, universe, race } = createCharacterDTO;
 
-    // si el planeta no está, avisa
-    if (!existingPlanets.length) {
-      const planetNames = Array.isArray(planet) ? planet.join(', ') : planet;
-      throw new ConflictException(
-        `El planeta indicado no existe: ${planetNames}`,
-      );
-    }
+    createCharacterDTO.name = StringUtils.capitalize(name);
+    createCharacterDTO.planet = StringUtils.capitalize(planet);
+    createCharacterDTO.universe = StringUtils.capitalize(universe);
+    createCharacterDTO.race = StringUtils.capitalize(race);
+    createCharacterDTO.techniques = StringUtils.capitalizeArray(techniques);
 
-    // lo mismo pero para universos
-
-    const existingUniverses = await this.universeService.findExistingUniverse(
-      Array.isArray(universe)
-        ? universe.map((name) => name.toLowerCase())
-        : universe.toLowerCase(),
-    );
-
-    if (!existingUniverses.length) {
-      const universeNames = Array.isArray(universe)
-        ? universe.join(', ')
-        : universe;
-      throw new ConflictException(
-        `El universo indicado no existe: ${universeNames}`,
-      );
-    }
-
-    // revisa si el personaje ya existe
-    const existingCharacter = await this.charactersModel
-      .findOne({ name: { $regex: new RegExp(name, 'i') } })
-      .exec();
-    if (existingCharacter) {
-      throw new ConflictException(`El personaje '${name}' ya existe`);
-    }
-
-    createCharacterDto.name = StringUtils.capitalize(name);
-    createCharacterDto.planet = StringUtils.capitalize(planet);
-    createCharacterDto.universe = StringUtils.capitalize(universe);
-    createCharacterDto.race = StringUtils.capitalize(race);
-    createCharacterDto.techniques = StringUtils.capitalizeArray(techniques);
-
-    // Crear el personaje
-    const character = new this.charactersModel(createCharacterDto);
+    const character = new this.charactersModel(createCharacterDTO);
     return character.save();
   }
 
-  //Metodo para encontrar a todos los personajes
-  async findAll(): Promise<CharactersResponse[]> {
-    const characters = await this.charactersModel.find().exec();
-    // Se mapean los resultados a la estructura de la interfaz creada
-    return characters.map((character) => ({
+  private mappedCharacterResponse(characterResponse: CharactersResponse[]) {
+    return characterResponse.map((character) => ({
       name: character.name,
       ki: {
         base: character.ki.base,
         max: character.ki.max,
       },
       image: character.image,
-      afiliation: character.afiliation,
+      affiliation: character.affiliation,
     }));
+  }
+
+  async findAll(): Promise<CharactersResponse[]> {
+    const characters = await this.charactersModel.find().exec();
+    return this.mappedCharacterResponse(characters);
   }
 
   //metodo para filtrar por planeta
@@ -125,15 +102,7 @@ export class CharactersService {
     const randomCharacters = shuffledCharacters.slice(0, 4);
 
     // Devuelve los personajes aleatorios seleccionados
-    return randomCharacters.map((character) => ({
-      name: character.name,
-      ki: {
-        base: character.ki.base,
-        max: character.ki.max,
-      },
-      image: character.image,
-      afiliation: character.afiliation,
-    }));
+    return this.mappedCharacterResponse(randomCharacters);
   }
 
   private shuffleArray(array: any[]): any[] {

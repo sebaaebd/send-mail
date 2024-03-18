@@ -7,4 +7,7 @@ export class StringUtils {
   static capitalizeArray(values: string[]): string[] {
     return values.map((value) => this.capitalize(value));
   }
+  static removeWhiteSpace(value: string): string {
+    return value.replace(/^\s+|\s+$/g, '');
+  }
 }
