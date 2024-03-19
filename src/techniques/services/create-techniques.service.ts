@@ -18,7 +18,7 @@ export class CreateTechniqueService {
     const { name } = createTechniqueDto;
     await this.techniqueFindOneService.findTechnique(name);
   }
-  createTechniqueDto;
+
   async create(createTechniqueDto: CreateTechniqueDto) {
     try {
       await this.validateData(createTechniqueDto);
