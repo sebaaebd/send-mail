@@ -18,7 +18,7 @@ export class PlanetsService {
     }
   }
 
-  private async findExistingPlanets(planet: string): Promise<PlanetsDocument> {
+  async findExistingPlanets(planet: string): Promise<PlanetsDocument> {
     return await this.planetsModel
       .findOne({
         name: { $regex: new RegExp(StringUtils.removeWhiteSpace(planet), 'i') },
