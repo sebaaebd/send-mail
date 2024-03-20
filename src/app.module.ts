@@ -5,6 +5,7 @@ import { ConfigModule } from '@nestjs/config';
 import { PlanetsModule } from './planet/planets.module';
 import { TechniquesModule } from './techniques/techniques.module';
 import { UniverseModule } from './universe/universe.module';
+import { NewsletterSubscriptionModule } from './newsletter-subscription/newsletter-subscription.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -16,6 +17,7 @@ import { UniverseModule } from './universe/universe.module';
     PlanetsModule,
     TechniquesModule,
     UniverseModule,
+    NewsletterSubscriptionModule,
   ],
   controllers: [],
   providers: [],
