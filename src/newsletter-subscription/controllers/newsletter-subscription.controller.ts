@@ -1,27 +1,18 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-} from '@nestjs/common';
+import { Controller, Post, Body } from '@nestjs/common';
 import { NewsletterSubscriptionService } from '../services/newsletter-subscription.service';
 import { CreateNewsletterSubscriptionDto } from '../dto/create-newsletter-subscription.dto';
+import { SendMailService } from '../services/sendMail.service';
 
 @Controller('newsletter')
 export class NewsletterSubscriptionController {
   constructor(
     private readonly newsletterSubscriptionService: NewsletterSubscriptionService,
+    private readonly sendMailService: SendMailService,
   ) {}
 
   @Post()
-  create(
-    @Body() createNewsletterSubscriptionDto: CreateNewsletterSubscriptionDto,
-  ) {
-    return this.newsletterSubscriptionService.create(
-      createNewsletterSubscriptionDto,
-    );
+  async create(@Body() createSubscriptionDto: CreateNewsletterSubscriptionDto) {
+    await this.newsletterSubscriptionService.create(createSubscriptionDto);
+    this.sendMailService.sendMail(createSubscriptionDto);
   }
 }
