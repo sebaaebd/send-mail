@@ -66,6 +66,8 @@ El proyecto esta hecho en `NestJS`por lo que debes tener ciertas consideración.
 
 | http://localhost:3000/techniques                                   |  POST  |                 |                            Ruta para crear una técnica                                                         | 
 
+| http://localhost:3000/newsletter                                   |  POST  |                 |                            Ruta para suscripción a newsletter                                                  | 
+
 
 ## FAQ
 
