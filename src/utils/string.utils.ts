@@ -10,4 +10,9 @@ export class StringUtils {
   static removeWhiteSpace(value: string): string {
     return value.replace(/^\s+|\s+$/g, '');
   }
+
+  static validEmail(value: string): boolean {
+    const regex = /^\w+([.-_+]?\w+)*@\w+([.-]?\w+)*(\.\w{2,10})+$/;
+    return regex.test(value);
+  }
 }

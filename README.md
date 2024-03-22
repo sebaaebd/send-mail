@@ -60,12 +60,11 @@ El proyecto esta hecho en `NestJS`por lo que debes tener ciertas consideración.
 | http://localhost:3000/charactera/planet/:name?character=:character |  GET   | Retorna 4 recomendaciones de personbajes que sean del planeta enviado `:name`y que no sea el personaje seleccionado `:character` | <pre>[{"name": "", "ki": {"base": "","max": "" }, "image": "", "afiliation": ""}, {...},{...},{...}]</pre> |
 | http://localhost:3000/characters/                                  |  POST  |                                                                                                                                  |                                                                                                            |
 | http://localhost:3000/characters/:name                             |  PUT   |                                             Actualiza un personaje segun su `:name`                                              |                                                                                                            |
-| http://localhost:3000/characters:name                              | DELETE |                                              Elimina un personaje según su `:name`                                               |  
+| http://localhost:3000/characters:name                              | DELETE |                                              Elimina un personaje según su `:name`                                               |
 
-| http://localhost:3000/planets                                      |  POST  |                 |                            Ruta para crear un planeta                                                          |  
+| http://localhost:3000/planets | POST | | Ruta para crear un planeta |
 
-| http://localhost:3000/techniques                                   |  POST  |                 |                            Ruta para crear una técnica                                                         | 
-
+| http://localhost:3000/newsletter | POST | | Ruta para suscripción a newsletter |
 
 ## FAQ
 
