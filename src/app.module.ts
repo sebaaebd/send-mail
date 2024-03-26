@@ -6,6 +6,7 @@ import { PlanetsModule } from './planet/planets.module';
 import { TechniquesModule } from './techniques/techniques.module';
 import { UniverseModule } from './universe/universe.module';
 import { NewsletterSubscriptionModule } from './newsletter-subscription/newsletter-subscription.module';
+import { CloudinaryModule } from './cloudinary/cloudinary.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { NewsletterSubscriptionModule } from './newsletter-subscription/newslett
     TechniquesModule,
     UniverseModule,
     NewsletterSubscriptionModule,
+    CloudinaryModule,
   ],
   controllers: [],
   providers: [],
