@@ -7,7 +7,9 @@ import {
 } from '@nestjs/common';
 import { CreatePlanetDto } from '../dto/create-planet.dto';
 import { CreatePlanetsService } from '../services/create-planets.service';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Planets')
 @Controller('planets')
 export class PlanetController {
   constructor(private readonly createPlanetService: CreatePlanetsService) {}

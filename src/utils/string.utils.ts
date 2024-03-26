@@ -12,7 +12,7 @@ export class StringUtils {
   }
 
   static validEmail(value: string): boolean {
-    const regex = /^\w+([.-_+]?\w+)*@\w+([.-]?\w+)*(\.\w{2,10})+$/;
+    const regex = /[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}$/;
     return regex.test(value);
   }
 }

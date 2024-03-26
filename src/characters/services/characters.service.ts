@@ -1,22 +1,15 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-
 import { PlanetsService } from '../../planet/services/planets.service';
 import { TechniquesService } from '../../techniques/services/techniques.service';
 import { UniverseService } from '../../universe/services/universe.service';
-
-import { CharacterFindOneService } from './character-find-one.service';
 import { CharacterExitsService } from './character-exits.service';
-
 import { Characters, CharactersDocument } from '../schemas/characters.schema';
-
 import { CreateCharacterDto } from '../dto/create-character.dto';
-import { UpdateCharacterDto } from '../dto/update-character.dto';
-
 import { CharactersResponse } from '../interface/characters.interface';
-
 import { StringUtils } from 'src/utils/string.utils';
+import { UploadFilesService } from 'src/cloudinary/services/uploadFiles.service';
 
 // aqui se definen los servicios como get, post, put, patch que luego se instancian en el controlador
 @Injectable()
@@ -27,23 +20,67 @@ export class CharactersService {
     private readonly techniquesService: TechniquesService,
     private readonly planetsService: PlanetsService,
     private readonly universeService: UniverseService,
-    private readonly characterFindOneService: CharacterFindOneService,
     private readonly characterExitsService: CharacterExitsService,
+    private readonly uploadFilesService: UploadFilesService,
   ) {}
 
   private async validateDataForSaving(createCharacterDTO: CreateCharacterDto) {
     const { techniques, planet, name, universe } = createCharacterDTO;
-
     await this.techniquesService.validateTechniques(techniques);
     await this.planetsService.validExistsPlanet(planet);
     await this.universeService.isValidUniverse(universe);
     await this.characterExitsService.unique(name);
   }
 
-  async create(createCharacterDTO: CreateCharacterDto) {
+  async uploadMainImage(
+    mainImage: Express.Multer.File,
+    characterFolderUrl: string,
+  ): Promise<string> {
+    return (
+      await this.uploadFilesService.uploadAndProcessFiles(
+        [mainImage],
+        characterFolderUrl,
+      )
+    )[0];
+  }
+
+  async uploadStageImages(
+    stageImages: Express.Multer.File[],
+    stagesFolderUrl: string,
+  ): Promise<string[]> {
+    return this.uploadFilesService.uploadAndProcessFiles(
+      stageImages,
+      stagesFolderUrl,
+    );
+  }
+
+  async create(
+    createCharacterDTO: CreateCharacterDto,
+    images: Express.Multer.File[],
+  ) {
     try {
       await this.validateDataForSaving(createCharacterDTO);
-      await this.characterSave(createCharacterDTO);
+      const folder = 'DragonBall Image Database';
+      const characterFolder = createCharacterDTO.name.replace(/\s/g, '_');
+      const characterFolderUrl = `${folder}/${characterFolder}`;
+
+      const mainImage = images[0];
+      const mainImageUrl = await this.uploadMainImage(
+        mainImage,
+        characterFolderUrl,
+      );
+
+      const stagesFolderUrl = `${characterFolderUrl}/stages`;
+      const stageUrls = await this.uploadStageImages(
+        images.slice(1),
+        stagesFolderUrl,
+      );
+
+      createCharacterDTO.image = mainImageUrl;
+      createCharacterDTO.stage = stageUrls;
+
+      // Guardar el personaje en la base de datos
+      return await this.characterSave(createCharacterDTO);
     } catch (error) {
       throw new BadRequestException(error);
     }
@@ -51,13 +88,11 @@ export class CharactersService {
 
   async characterSave(createCharacterDTO: CreateCharacterDto) {
     const { techniques, planet, name, universe, race } = createCharacterDTO;
-
     createCharacterDTO.name = StringUtils.capitalize(name);
     createCharacterDTO.planet = StringUtils.capitalize(planet);
     createCharacterDTO.universe = StringUtils.capitalize(universe);
     createCharacterDTO.race = StringUtils.capitalize(race);
     createCharacterDTO.techniques = StringUtils.capitalizeArray(techniques);
-
     const character = new this.charactersModel(createCharacterDTO);
     return character.save();
   }
@@ -71,6 +106,8 @@ export class CharactersService {
       },
       image: character.image,
       affiliation: character.affiliation,
+      universe: character.universe,
+      techniques: character.techniques,
     }));
   }
 
@@ -110,13 +147,5 @@ export class CharactersService {
       [array[i], array[j]] = [array[j], array[i]];
     }
     return array;
-  }
-
-  update(name: string, updateCharacterDto: UpdateCharacterDto) {
-    return `This action updates a #${name} character ${updateCharacterDto}`;
-  }
-
-  remove(name: string) {
-    return `This action removes a #${name} character`;
   }
 }

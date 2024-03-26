@@ -14,6 +14,11 @@ import { UniverseService } from 'src/universe/services/universe.service';
 import { Universe, UniverseSchema } from 'src/universe/schemas/universe.schema';
 import { CharacterFindOneService } from './services/character-find-one.service';
 import { CharacterExitsService } from './services/character-exits.service';
+import { UploadFilesService } from 'src/cloudinary/services/uploadFiles.service';
+import { CharacterDeleteService } from './services/character-delete.service';
+import { DeleteImageService } from 'src/cloudinary/services/delete-image.service';
+import { CharactersUpdateService } from './services/characters-update.service';
+import { CharacterImageService } from './services/character-images.service';
 
 @Module({
   imports: [
@@ -32,6 +37,11 @@ import { CharacterExitsService } from './services/character-exits.service';
     UniverseService,
     CharacterFindOneService,
     CharacterExitsService,
+    UploadFilesService,
+    CharacterDeleteService,
+    DeleteImageService,
+    CharactersUpdateService,
+    CharacterImageService,
   ],
 })
 export class CharactersModule {}

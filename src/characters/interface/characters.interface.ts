@@ -8,6 +8,8 @@ export interface CharactersResponse {
   };
   image: string;
   affiliation: string;
+  universe: string;
+  techniques: string[];
 }
 
 //interface para un solo personaje del metodo findOne
