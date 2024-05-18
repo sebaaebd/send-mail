@@ -1,20 +1,19 @@
+/* eslint-disable prettier/prettier */
 import { Controller, Post, Body } from '@nestjs/common';
-import { NewsletterSubscriptionService } from '../services/newsletter-subscription.service';
-import { CreateNewsletterSubscriptionDto } from '../dto/create-newsletter-subscription.dto';
 import { SendMailService } from '../services/sendMail.service';
 import { ApiTags } from '@nestjs/swagger';
+import { RegisterDto } from '../dto/register.dto';
+import { CalendarEventDto } from '../dto/calendarEvent.dto';
 
 @ApiTags('Newsletter')
 @Controller('newsletter')
 export class NewsletterSubscriptionController {
   constructor(
-    private readonly newsletterSubscriptionService: NewsletterSubscriptionService,
     private readonly sendMailService: SendMailService,
   ) {}
 
-  @Post()
-  async create(@Body() createSubscriptionDto: CreateNewsletterSubscriptionDto) {
-    await this.newsletterSubscriptionService.create(createSubscriptionDto);
-    this.sendMailService.sendMail(createSubscriptionDto);
+  @Post("/register")
+  async register(@Body() registerDto: RegisterDto, @Body()calendarEventDto:CalendarEventDto) {
+    await this.sendMailService.sendRegister(registerDto,calendarEventDto);
   }
 }

@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateNewsletterSubscriptionDto } from '../dto/create-newsletter-subscription.dto';
 import { FindEmailSubscriptionService } from './find-email-subscription';
@@ -24,14 +25,14 @@ export class NewsletterSubscriptionService {
   async create(createSubscriptionDto: CreateNewsletterSubscriptionDto) {
     try {
       await this.validateEmail(createSubscriptionDto);
-      await this.emailSave(createSubscriptionDto);
+      //await this.emailSave(createSubscriptionDto);
     } catch (error) {
       throw new BadRequestException(error.message);
     }
   }
-
+/** 
   async emailSave(createSubscriptionDto: CreateNewsletterSubscriptionDto) {
     const email = new this.subscriptionModel(createSubscriptionDto);
     return email.save();
-  }
+  }*/
 }

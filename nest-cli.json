@@ -4,7 +4,7 @@
   "sourceRoot": "src",
   "compilerOptions": {
     "deleteOutDir": true,
-    "assets": ["newsletter-subscription/templates/**/*"],
+    "assets": ["newsletter-subscription/services/template/*"],
     "watchAssets": true
   }
 }
